@@ -4,7 +4,15 @@ const count = document.getElementById('count');
 const total = document.getElementById('total');
 const concertSelect = document.getElementById('concert');
 
+populateUI();
+
 let ticketPrice = +concertSelect.value;
+
+//Save selected concert index and price
+function setConcertData(concertIndex, concertPrice) {
+  localStorage.setItem('selectedConcertIndex', concertIndex);
+  localStorage.setItem('selectedConcertPrice', concertPrice);
+}
 
 //Update total and count
 function updateSelectedCount() {
@@ -20,11 +28,29 @@ function updateSelectedCount() {
   total.innerText = selectedSeatsCount * ticketPrice;
 }
 
+// Get data from localstorage and populate UI
+function populateUI() {
+  const selectedSeats = JSON.parse(localStorage.getItem('selectedSeats'));
+
+  if (selectedSeats !== null && selectedSeats.length > 0 ) {
+    seats.forEach((seat, index) => {
+      if(selectedSeats.indexOf(index) > -1) {
+        seat.classList.add('selected');
+      }
+    });
+  }
+
+  const selectedConcertIndex = localStorage.getItem('selectedConcertIndex'); 
+  if (selectedConcertIndex !== null) {
+    concertSelect.selectedIndex = selectedConcertIndex;
+  }
+}
+
 // Concert select event
 concertSelect.addEventListener('change', (e) => {
   ticketPrice = +e.target.value;
 
-  console.log(e.target.selectedIndex);
+  setConcertData(e.target.selectedIndex, e.target.value);
 
   updateSelectedCount();
 });
